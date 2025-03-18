@@ -484,6 +484,8 @@ def openapihttpdomain(spec, **options):
 
     convert = utils.get_text_converter(options)
 
+    method_filter = "get"
+
     # https://github.com/OAI/OpenAPI-Specification/blob/3.1.0/versions/3.1.0.md#paths-object
     if "group" in options:
         groups = collections.OrderedDict(
@@ -492,6 +494,9 @@ def openapihttpdomain(spec, **options):
 
         for endpoint in paths:
             for method, properties in spec["paths"][endpoint].items():
+                if method.lower() == method_filter.lower():
+                    continue
+
                 key = properties.get("tags", [""])[0]
                 groups.setdefault(key, []).append(
                     _httpresource(
@@ -514,6 +519,9 @@ def openapihttpdomain(spec, **options):
     else:
         for endpoint in paths:
             for method, properties in spec["paths"][endpoint].items():
+                if method.lower() == method_filter.lower():
+                    continue
+
                 generators.append(
                     _httpresource(
                         endpoint,
